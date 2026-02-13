@@ -1,0 +1,549 @@
+<!--
+  Valentine's Day Website for Sammie
+
+  Required images:
+    /images/background.jpg   — Hero background (romantic, soft lighting)
+    /images/photo1.jpg       — Couple photo 1
+    /images/photo2.jpg       — Couple photo 2
+    /images/photo3.jpg       — Couple photo 3
+    /images/photo4.jpg       — Couple photo 4
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You, Sammie ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rose: #b5485d;
+      --deep-rose: #8c2f4a;
+      --blush: #f2d1d8;
+      --cream: #fdf6f0;
+      --ivory: #fffaf5;
+      --gold: #d4a853;
+      --gold-light: #f0ddb4;
+      --text: #3d2024;
+      --text-light: #6b4a50;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      color: var(--text);
+      background: var(--cream);
+      overflow-x: hidden;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('./background.jpeg') center/cover no-repeat;
+      background-attachment: scroll;
+      z-index: 0;
+    }
+
+    @media (min-width: 769px) {
+      .hero-bg { background-attachment: fixed; }
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(60, 20, 30, 0.55) 0%,
+        rgba(60, 20, 30, 0.65) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 1.8s ease 0.4s forwards;
+    }
+
+    .hero-content h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2.4rem, 8vw, 5rem);
+      color: #fff;
+      font-weight: 400;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+      margin-bottom: 0.3em;
+    }
+
+    .hero-content p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 3vw, 1.3rem);
+      color: var(--blush);
+      font-style: italic;
+      letter-spacing: 0.08em;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      opacity: 0;
+      animation: fadeIn 1s ease 2.5s forwards;
+    }
+
+    .scroll-indicator span {
+      display: block;
+      width: 24px;
+      height: 24px;
+      border-right: 2px solid var(--blush);
+      border-bottom: 2px solid var(--blush);
+      transform: rotate(45deg);
+      animation: scrollBounce 2s ease infinite;
+    }
+
+    /* ── Petals canvas ── */
+    #petals {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    /* ── Gallery ── */
+    .gallery {
+      padding: 5rem 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .gallery h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 5vw, 2.4rem);
+      color: var(--deep-rose);
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    @media (min-width: 600px) {
+      .gallery-grid {
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: auto auto;
+        gap: 1rem;
+      }
+      .gallery-grid .photo:nth-child(1) { grid-column: 1 / 4; grid-row: 1 / 3; }
+      .gallery-grid .photo:nth-child(2) { grid-column: 4 / 7; }
+      .gallery-grid .photo:nth-child(3) { grid-column: 4 / 7; }
+      .gallery-grid .photo:nth-child(4) { grid-column: 1 / 4; }
+      .gallery-grid .photo:nth-child(5) { grid-column: 4 / 7; }
+    }
+
+    .photo {
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .photo.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .photo:hover img {
+      transform: scale(1.04);
+    }
+
+    /* ── Love Letter ── */
+    .letter {
+      padding: 4rem 1.5rem 5rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .letter-card {
+      background: var(--ivory);
+      border-radius: 16px;
+      padding: clamp(2rem, 6vw, 3.5rem);
+      box-shadow:
+        0 4px 30px rgba(140, 47, 74, 0.08),
+        0 1px 3px rgba(140, 47, 74, 0.05);
+      border: 1px solid rgba(212, 168, 83, 0.2);
+      position: relative;
+    }
+
+    .letter-card::before {
+      content: '\201C';
+      font-family: 'Playfair Display', serif;
+      font-size: 6rem;
+      color: var(--gold-light);
+      position: absolute;
+      top: -0.15em;
+      left: 0.2em;
+      line-height: 1;
+      opacity: 0.5;
+    }
+
+    .letter-card p {
+      font-size: clamp(1.05rem, 2.8vw, 1.2rem);
+      line-height: 1.85;
+      color: var(--text-light);
+      margin-bottom: 1.5em;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .letter-card p.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .letter-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .letter-card .greeting {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+      color: var(--deep-rose);
+    }
+
+    .letter-card .sign-off {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      color: var(--rose);
+      text-align: right;
+      margin-top: 0.5em;
+    }
+
+    /* ── The Ask ── */
+    .ask {
+      padding: 5rem 1.5rem 6rem;
+      text-align: center;
+    }
+
+    .ask h2 {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(2rem, 7vw, 3.8rem);
+      color: var(--deep-rose);
+      font-weight: 400;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 1s ease, transform 1s ease;
+      text-shadow: 0 0 40px rgba(181, 72, 93, 0.15);
+    }
+
+    .ask h2.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      opacity: 0;
+      transition: opacity 0.8s ease 0.4s;
+    }
+
+    .buttons.visible { opacity: 1; }
+
+    .btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      padding: 0.85em 2.5em;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, var(--rose), var(--deep-rose));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(181, 72, 93, 0.35);
+    }
+
+    .btn-yes:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 28px rgba(181, 72, 93, 0.5);
+    }
+
+    .btn-no {
+      background: var(--blush);
+      color: var(--text-light);
+      position: relative;
+      transition: transform 0.15s ease, left 0.15s ease, top 0.15s ease, box-shadow 0.3s ease;
+    }
+
+    .btn-no.runaway {
+      position: fixed;
+      z-index: 100;
+    }
+
+    .celebration {
+      margin-top: 2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+      color: var(--deep-rose);
+      font-style: italic;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      display: none;
+    }
+
+    .celebration.show {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Keyframes ── */
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+
+    @keyframes scrollBounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); opacity: 0.6; }
+      50% { transform: rotate(45deg) translateY(8px); opacity: 1; }
+    }
+
+    /* ── Utilities ── */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="petals"></canvas>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>My beautiful Sammie,</h1>
+      <p>a little something, just for you</p>
+    </div>
+    <div class="scroll-indicator"><span></span></div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="gallery">
+    <h2>Us</h2>
+    <div class="gallery-grid">
+      <div class="photo"><img src="./1.jpeg" alt="Us together" loading="lazy"></div>
+      <div class="photo"><img src="./2.jpeg" alt="Us together" loading="lazy"></div>
+      <div class="photo"><img src="./3.jpeg" alt="Us together" loading="lazy"></div>
+      <div class="photo"><img src="./4.jpeg" alt="Us together" loading="lazy"></div>
+      <div class="photo"><img src="./5.jpeg" alt="Us together" loading="lazy"></div>
+    </div>
+  </section>
+
+  <!-- Love Letter -->
+  <section class="letter">
+    <div class="letter-card">
+      <p class="greeting">My beautiful Sammie,</p>
+      <p>From the moment you walked in on our first date — in those unforgettable J'adore jeans — time honestly paused for me. I remember thinking that I had never seen someone so effortlessly stunning, so completely herself. And somehow, eight months later, you still leave me breathless.</p>
+      <p>I love the softness you carry and the fire you don't even realize you have. The way you can switch from being wrapped up in a true crime series to moving your two left feet to your favorite RnB and Afro swing songs like the music lives inside you. The way your smile feels like home. The way peonies suddenly became my favorite flower because they remind me of you — beautiful, full, impossible to ignore.</p>
+      <p>These past eight months have been some of the sweetest of my life, and every day with you feels like the start of something I never want to end.</p>
+      <p>Happy Valentine's Day, my love. You'll always be my favorite first look.</p>
+      <p class="sign-off">Forever yours,<br>Ragebaiter</p>
+    </div>
+  </section>
+
+  <!-- The Ask -->
+  <section class="ask">
+    <h2>Will You Be My Valentine?</h2>
+    <div class="buttons">
+      <button class="btn btn-yes" onclick="sayYes()">Yes 💕</button>
+      <button class="btn btn-no" id="noBtn">No</button>
+    </div>
+    <div class="celebration" id="celebration">I knew you'd say yes! ❤️<br>Happy Valentine's Day, my love.</div>
+  </section>
+
+  <script>
+    /* ── Scroll reveal ── */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.photo, .letter-card p, .ask h2, .buttons').forEach(el => observer.observe(el));
+
+    /* ── Floating petals (subtle) ── */
+    const canvas = document.getElementById('petals');
+    const ctx = canvas.getContext('2d');
+    let petals = [];
+    let celebrationMode = false;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    class Petal {
+      constructor(burst) {
+        this.reset(burst);
+      }
+      reset(burst) {
+        this.x = Math.random() * canvas.width;
+        this.y = burst ? (Math.random() * canvas.height * 0.4) : -20;
+        this.size = Math.random() * 8 + 4;
+        this.speedY = Math.random() * 0.6 + 0.3;
+        this.speedX = (Math.random() - 0.5) * 0.5;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.rotSpeed = (Math.random() - 0.5) * 0.02;
+        this.opacity = Math.random() * 0.3 + 0.15;
+        if (burst) {
+          this.speedY = Math.random() * 2 + 1;
+          this.speedX = (Math.random() - 0.5) * 2;
+          this.opacity = Math.random() * 0.5 + 0.3;
+        }
+      }
+      update() {
+        this.y += this.speedY;
+        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.3;
+        this.rotation += this.rotSpeed;
+        if (this.y > canvas.height + 20) {
+          if (celebrationMode) { this.reset(true); }
+          else { this.reset(false); }
+        }
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = '#e8899a';
+        ctx.beginPath();
+        // Simple petal shape
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(-this.size * 0.5, -this.size, -this.size * 0.3, -this.size * 1.6, 0, -this.size * 1.8);
+        ctx.bezierCurveTo(this.size * 0.3, -this.size * 1.6, this.size * 0.5, -this.size, 0, 0);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // Start with a few gentle petals
+    for (let i = 0; i < 12; i++) {
+      const p = new Petal(false);
+      p.y = Math.random() * canvas.height;
+      petals.push(p);
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      petals.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* ── Yes button ── */
+    function sayYes() {
+      celebrationMode = true;
+      // Burst of petals
+      for (let i = 0; i < 50; i++) petals.push(new Petal(true));
+      const cel = document.getElementById('celebration');
+      cel.classList.add('show');
+      document.querySelector('.buttons').style.display = 'none';
+      // Trim petals back after burst
+      setTimeout(() => {
+        celebrationMode = false;
+        setTimeout(() => { petals.length = Math.min(petals.length, 25); }, 4000);
+      }, 3000);
+    }
+
+    /* ── No button shenanigans ── */
+    const noBtn = document.getElementById('noBtn');
+    const noTexts = ["Are you sure?", "Think again...", "Wrong answer 😤"];
+    let noCount = 0;
+
+    function moveNoButton() {
+      noCount++;
+      if (noCount <= noTexts.length) {
+        noBtn.textContent = noTexts[noCount - 1];
+      }
+      if (noCount > noTexts.length) {
+        noBtn.style.transition = 'opacity 0.4s ease';
+        noBtn.style.opacity = '0';
+        setTimeout(() => noBtn.remove(), 400);
+        return;
+      }
+      noBtn.classList.add('runaway');
+      const pad = 20;
+      const maxX = window.innerWidth - noBtn.offsetWidth - pad;
+      const maxY = window.innerHeight - noBtn.offsetHeight - pad;
+      noBtn.style.left = (Math.random() * maxX + pad) + 'px';
+      noBtn.style.top = (Math.random() * maxY + pad) + 'px';
+    }
+
+    noBtn.addEventListener('click', moveNoButton);
+    noBtn.addEventListener('mouseenter', function () {
+      if (noCount > 0 && window.innerWidth > 768) moveNoButton();
+    });
+  </script>
+
+</body>
+</html>
